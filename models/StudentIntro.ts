@@ -32,4 +32,24 @@ export class StudentIntro {
     this.studentIntroSchema.encode({ ...this, variant: 0 }, buffer);
     return buffer.slice(0, this.studentIntroSchema.getSpan(buffer));
   }
+
+  static studentIntroAccountSchema = borsh.struct([
+    borsh.bool("initialized"),
+    borsh.str("name"),
+    borsh.str("message"),
+  ]);
+
+  static deserialize(buffer?: Buffer): StudentIntro | null {
+    if (!buffer) {
+      return null;
+    }
+
+    try {
+      const { name, message } = this.studentIntroAccountSchema.decode(buffer);
+      return new StudentIntro(name, message);
+    } catch (error) {
+      console.log("Deserialization error:", error);
+      return null;
+    }
+  }
 }
